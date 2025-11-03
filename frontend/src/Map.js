@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, CircleMarker, useMap, LayersCon
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 import L from 'leaflet';
+import 'leaflet-routing-machine';
 
 const { BaseLayer } = LayersControl;
 
@@ -48,6 +49,9 @@ const Legend = () => {
         <span style={{display:'inline-block', width:'14px', height:'14px', borderRadius:'50%', background:'blue'}}></span>
         <span>Position actuelle</span>
       </div>
+      <div style={{display:'flex', alignItems:'center', gap:'6px'}}>
+        <span style={{display:'inline-block', width:'20px', height:'5px', background:'blue'}}></span> Itinéraire</div>
+
     </div>
   );
 };
@@ -81,6 +85,8 @@ const zttIcon = new L.Icon({
 const Map = () => {
   const [concessions, setConcessions] = useState([]);
   const [userPos, setUserPos] = useState([9.638239, -13.588346]);
+  const [routingControl, setRoutingControl] = useState(null);
+
 
   useEffect(() => {
     axios.get(apiUrl)
@@ -129,18 +135,30 @@ const Map = () => {
             key={c.id}
             position={[c.latitude, c.longitude]}
             icon={c.type === "ZTT" ? zttIcon : (c.visite ? greenIcon : redIcon)}
+            eventHandlers={{
+              click: (e) => {
+                if (routingControl) {
+                  routingControl.setWaypoints([
+                    L.latLng(userPos[0], userPos[1]),
+                    L.latLng(c.latitude, c.longitude)
+                  ]);
+                }
+              }
+            }}
           >
             <Popup>
               <b>{c.nom}</b><br />
               Visité : {c.visite ? "Oui" : "Non"}<br />
               Intérêt : {c.interet}<br />
               Type : {c.type}<br />
-              <button onClick={() => markVisited(c.id)}>Marquer comme visité</button>
+              <button onClick={() => markVisited(c.id)}>Marquer comme visité</button> <br/>
+              <small>📍 Cliquez sur le marqueur pour générer l'itinéraire</small>
             </Popup>
           </Marker>
         ))}
 
-        <LocateButton userPos={userPos} />
+        <LocateButton userPos={userPos} setRoutingControl={setRoutingControl} />
+
       </MapContainer>
 
       {/* Affichage de la légende en JSX */}
@@ -150,8 +168,23 @@ const Map = () => {
 };
 
 // Bouton pour centrer sur la position actuelle
-function LocateButton({ userPos }) {
+function LocateButton({ userPos, setRoutingControl }) {
   const map = useMap();
+
+  useEffect(() => {
+    if (!map) return;
+    const control = L.Routing.control({
+      waypoints: [L.latLng(userPos[0], userPos[1]), L.latLng(userPos[0], userPos[1])],
+      routeWhileDragging: true,
+      show: false,
+      addWaypoints: false,
+      lineOptions: { styles: [{ color: 'blue', opacity: 0.6, weight: 5 }] },
+      createMarker: () => null
+    }).addTo(map);
+
+    setRoutingControl(control);
+  }, [map, setRoutingControl, userPos]);
+
   const handleClick = () => {
     if (userPos && map) {
       map.setView(userPos, 17, { animate: true });
