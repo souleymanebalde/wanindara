@@ -1,0 +1,20 @@
+{
+  "short_name": "Wanindara",
+  "name": "Wanindara Propre - Enquête Terrain",
+  "icons": [
+    {
+      "src": "icons/ztt.jpg",
+      "sizes": "192x192",
+      "type": "image/jpg"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#007bff",
+  "background_color": "#ffffff"
+}
