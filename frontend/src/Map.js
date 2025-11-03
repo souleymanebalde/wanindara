@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 import L from 'leaflet';
 
-const local = 'http://127.0.0.1:8000/api/concessions/';
+//const local = 'http://127.0.0.1:8000/api/concessions/';
 const remote = 'https://wanindara.pythonanywhere.com/api/concessions/';
 
 const apiUrl = remote; // Choisir l'URL de l'API
@@ -26,8 +26,7 @@ const greenIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
-//test
-const test = 'testfd'
+
 
 // 🔴 Icône rouge pour "non visité"
 const redIcon = new L.Icon({
