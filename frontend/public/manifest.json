@@ -3,12 +3,12 @@
   "name": "Wanindara Propre - Enquête Terrain",
   "icons": [
     {
-      "src": "icons/ztt.jpg",
+      "src": "icons/logo.jpg",
       "sizes": "192x192",
       "type": "image/jpg"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "icons/logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }
