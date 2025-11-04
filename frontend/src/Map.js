@@ -7,8 +7,8 @@ import 'leaflet-routing-machine';
 
 const { BaseLayer } = LayersControl;
 
-//const local = 'http://127.0.0.1:8000/api/concessions/';
-const remote = 'https://wanindara.pythonanywhere.com/api/concessions/';
+const local = 'http://127.0.0.1:8000/api';
+const remote = 'https://wanindara.pythonanywhere.com/api';
 const apiUrl = remote;
 
 // Correction des icônes Leaflet
@@ -89,7 +89,7 @@ const Map = () => {
 
 
   useEffect(() => {
-    axios.get(apiUrl)
+    axios.get(`${apiUrl}/concessions/`)
       .then(res => setConcessions(res.data))
       .catch(err => console.log(err));
   }, []);
@@ -103,7 +103,7 @@ const Map = () => {
   }, []);
 
   const markVisited = (id) => {
-    axios.patch(`${apiUrl}/${id}/`, { visite: true, interet: "Oui" })
+    axios.patch(`${apiUrl}/concessions/${id}/`, { visite: true, interet: "Oui" })
       .then(() => {
         setConcessions(concessions.map(c => c.id === id ? { ...c, visite: true, interet: "Oui" } : c))
       });
@@ -152,7 +152,7 @@ const Map = () => {
               Intérêt : {c.interet}<br />
               Type : {c.type}<br />
               <button onClick={() => markVisited(c.id)}>Marquer comme visité</button> <br/>
-              <small>📍 Cliquez sur le marqueur pour générer l'itinéraire</small>
+              coords: {c.latitude}, {c.longitude}
             </Popup>
           </Marker>
         ))}
@@ -170,20 +170,54 @@ const Map = () => {
 // Bouton pour centrer sur la position actuelle
 function LocateButton({ userPos, setRoutingControl }) {
   const map = useMap();
+  const [concessions, setConcessions] = useState([]);
 
   useEffect(() => {
-    if (!map) return;
-    const control = L.Routing.control({
-      waypoints: [L.latLng(userPos[0], userPos[1]), L.latLng(userPos[0], userPos[1])],
-      routeWhileDragging: true,
-      show: false,
-      addWaypoints: true,
-      lineOptions: { styles: [{ color: 'blue', opacity: 0.6, weight: 5 }] },
-      createMarker: () => null,    
-    }).addTo(map);
+    axios.get(`${apiUrl}/concessions/`)
+      .then(res => setConcessions(res.data))
+      .catch(err => console.log(err));
+  }, []);
 
-    setRoutingControl(control);
-  }, [map, setRoutingControl, userPos]);
+  useEffect(() => {
+      if (!map) return;
+      const waypoints = concessions.map(c => L.latLng(c.latitude, c.longitude));
+  
+      const control = L.Routing.control({
+        waypoints: [L.latLng(userPos[0], userPos[1]),L.latLng(userPos[0], userPos[1])] ,
+        //[L.latLng(userPos[0], userPos[1]), L.latLng(userPos[0], userPos[1])],
+        routeWhileDragging: true,
+        show: false,
+        addWaypoints: true,
+        lineOptions: { styles: [{ color: 'blue', opacity: 0.6, weight: 5 }] },
+        createMarker: () => null,    
+      }).addTo(map);
+      setRoutingControl(control);
+    }, [map, setRoutingControl, userPos]);
+
+
+  useEffect(() => {
+    axios.get(`${apiUrl}/optimize/`)
+    .then(res => {
+      const ordered = res.data.optimized_route;
+      const waypoints = ordered.map(p => L.latLng(p.latitude, p.longitude));
+
+      const control = L.Routing.control({
+        waypoints,
+        lineOptions: {
+          styles: [{ color: 'green', weight: 5, opacity: 0.7 }]
+        },
+        addWaypoints: true,
+        routeWhileDragging: false,
+        show: false,
+        
+      }).addTo(map);
+
+      setRoutingControl(control);
+    })
+    .catch(err => console.error(err));
+}, [map]);
+
+  
 
   const handleClick = () => {
     if (userPos && map) {

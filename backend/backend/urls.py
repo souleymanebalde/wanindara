@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from concessions.views import ConcessionViewSet
+from concessions.views import ConcessionViewSet, optimize_route
 
 router = routers.DefaultRouter()
 router.register(r'concessions', ConcessionViewSet)
@@ -9,4 +9,6 @@ router.register(r'concessions', ConcessionViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('api/optimize/', optimize_route),
+
 ]
