@@ -16,7 +16,7 @@ frontend/yarn-error.log*
 # Backend
 backend/__pycache__/
 backend/*.pyc
-backend/db.sqlite3
+#backend/db.sqlite3
 backend/.env
 backend/media/
 backend/static/
