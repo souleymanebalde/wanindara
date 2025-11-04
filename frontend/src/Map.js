@@ -177,9 +177,9 @@ function LocateButton({ userPos, setRoutingControl }) {
       waypoints: [L.latLng(userPos[0], userPos[1]), L.latLng(userPos[0], userPos[1])],
       routeWhileDragging: true,
       show: false,
-      addWaypoints: false,
+      addWaypoints: true,
       lineOptions: { styles: [{ color: 'blue', opacity: 0.6, weight: 5 }] },
-      createMarker: () => null
+      createMarker: () => null,    
     }).addTo(map);
 
     setRoutingControl(control);

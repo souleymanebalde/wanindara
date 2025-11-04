@@ -11,3 +11,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* cache le panneau d'instructions de leaflet-routing-machine */
+.leaflet-routing-container,
+.leaflet-routing-container-hide, 
+.leaflet-routing-itinerary,
+.leaflet-routing-alt {
+  display: none !important;
+}
