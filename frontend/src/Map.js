@@ -7,7 +7,7 @@ import 'leaflet-routing-machine';
 
 const { BaseLayer } = LayersControl;
 
-const local = 'http://127.0.0.1:8000/api';
+//const local = 'http://127.0.0.1:8000/api';
 const remote = 'https://wanindara.pythonanywhere.com/api';
 const apiUrl = remote;
 
@@ -180,7 +180,7 @@ function LocateButton({ userPos, setRoutingControl }) {
 
   useEffect(() => {
       if (!map) return;
-      const waypoints = concessions.map(c => L.latLng(c.latitude, c.longitude));
+      //const waypoints = concessions.map(c => L.latLng(c.latitude, c.longitude));
   
       const control = L.Routing.control({
         waypoints: [L.latLng(userPos[0], userPos[1]),L.latLng(userPos[0], userPos[1])] ,
